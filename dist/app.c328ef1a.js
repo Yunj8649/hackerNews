@@ -124,46 +124,31 @@ var container = document.getElementById('root');
 var content = document.createElement('div');
 var NEWS_URL = 'https://api.hnpwa.com/v0/news/1.json';
 var CONTENT_URL = 'https://api.hnpwa.com/v0/item/@id.json';
-ajax.open('GET', NEWS_URL, false); // open의 메소드는 첫번째 string, 두번째는 url 문자열 세번째는 async: boolean (false: 동기로 가져옴)
 
-ajax.send(); // 데이터를 가져옴
-// 응답값을 json형태인 객체로 변환
+function getData(url) {
+  ajax.open('GET', url, false); // open의 메소드는 첫번째 string, 두번째는 url 문자열 세번째는 async: boolean (false: 동기로 가져옴)
 
-var newsFeed = JSON.parse(ajax.response);
-console.log(newsFeed); // 정적으로 태그 추가
-// document.getElementById('root').innerHTML = `
-// <ul>
-//   <li>${newsFeed[0].title}</li>
-//   <li>${newsFeed[1].title}</li>
-//   <li>${newsFeed[2].title}</li>
-// </ul>
-// `
-// 동적으로 태그 추가
+  ajax.send(); // 데이터를 가져옴
 
+  return JSON.parse(ajax.response);
+}
+
+var newsFeed = getData(NEWS_URL);
 var ul = document.createElement('ul');
 window.addEventListener('hashchange', function () {
   var id = location.hash.substr(1);
-  console.log(id, CONTENT_URL.replace('@id', id));
-  ajax.open('GET', CONTENT_URL.replace('@id', id), false);
-  ajax.send();
-  var newsContent = JSON.parse(ajax.response);
-  console.log('newsContent :', newsContent);
-  var title = document.createElement('h1');
-  title.innerHTML = newsContent.title;
-  content.appendChild(title);
+  var newsContent = getData(CONTENT_URL.replace('@id', id));
+  container.innerHTML = "\n    <h1>".concat(newsContent.title, "</h1>\n\n    <div>\n      <a href=\"#\">\uBAA9\uB85D\uC73C\uB85C</a>\n    </div>\n  ");
 });
+var newsList = [];
+newsList.push('<ul>');
 
 for (var i = 0; i < newsFeed.length; i++) {
-  var li = document.createElement('li');
-  var a = document.createElement('a');
-  a.href = "#".concat(newsFeed[i].id);
-  a.innerHTML = "".concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")");
-  li.appendChild(a);
-  ul.appendChild(li);
+  newsList.push("\n    <li>\n      <a href=#".concat(newsFeed[i].id, ">\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n      </a>\n    </li>\n  "));
 }
 
-container.appendChild(ul);
-container.appendChild(content);
+newsList.push('</ul>');
+container.innerHTML = newsList.join('');
 },{}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
