@@ -133,22 +133,38 @@ function getData(url) {
   return JSON.parse(ajax.response);
 }
 
-var newsFeed = getData(NEWS_URL);
-var ul = document.createElement('ul');
-window.addEventListener('hashchange', function () {
+function newsFeed() {
+  var newsFeed = getData(NEWS_URL);
+  var newsList = [];
+  newsList.push('<ul>');
+
+  for (var i = 0; i < newsFeed.length; i++) {
+    newsList.push("\n      <li>\n        <a href=#".concat(newsFeed[i].id, ">\n          ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n        </a>\n      </li>\n    "));
+  }
+
+  newsList.push('</ul>');
+  container.innerHTML = newsList.join('');
+}
+
+function newsDetail() {
   var id = location.hash.substr(1);
   var newsContent = getData(CONTENT_URL.replace('@id', id));
   container.innerHTML = "\n    <h1>".concat(newsContent.title, "</h1>\n\n    <div>\n      <a href=\"#\">\uBAA9\uB85D\uC73C\uB85C</a>\n    </div>\n  ");
-});
-var newsList = [];
-newsList.push('<ul>');
-
-for (var i = 0; i < newsFeed.length; i++) {
-  newsList.push("\n    <li>\n      <a href=#".concat(newsFeed[i].id, ">\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n      </a>\n    </li>\n  "));
 }
 
-newsList.push('</ul>');
-container.innerHTML = newsList.join('');
+window.addEventListener('hashchange', router);
+
+function router() {
+  var routePath = location.hash;
+
+  if (routePath === '') {
+    newsFeed();
+  } else {
+    newsDetail();
+  }
+}
+
+router();
 },{}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
