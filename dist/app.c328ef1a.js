@@ -120,7 +120,10 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 })({"app.js":[function(require,module,exports) {
 var ajax = new XMLHttpRequest(); // ajax는  new XMLHttpRequest가 반환하는 값을 저장하는 변수
 
+var container = document.getElementById('root');
+var content = document.createElement('div');
 var NEWS_URL = 'https://api.hnpwa.com/v0/news/1.json';
+var CONTENT_URL = 'https://api.hnpwa.com/v0/item/@id.json';
 ajax.open('GET', NEWS_URL, false); // open의 메소드는 첫번째 string, 두번째는 url 문자열 세번째는 async: boolean (false: 동기로 가져옴)
 
 ajax.send(); // 데이터를 가져옴
@@ -138,14 +141,29 @@ console.log(newsFeed); // 정적으로 태그 추가
 // 동적으로 태그 추가
 
 var ul = document.createElement('ul');
+window.addEventListener('hashchange', function () {
+  var id = location.hash.substr(1);
+  console.log(id, CONTENT_URL.replace('@id', id));
+  ajax.open('GET', CONTENT_URL.replace('@id', id), false);
+  ajax.send();
+  var newsContent = JSON.parse(ajax.response);
+  console.log('newsContent :', newsContent);
+  var title = document.createElement('h1');
+  title.innerHTML = newsContent.title;
+  content.appendChild(title);
+});
 
 for (var i = 0; i < newsFeed.length; i++) {
   var li = document.createElement('li');
-  li.innerHTML = newsFeed[i].title;
+  var a = document.createElement('a');
+  a.href = "#".concat(newsFeed[i].id);
+  a.innerHTML = "".concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")");
+  li.appendChild(a);
   ul.appendChild(li);
 }
 
-document.getElementById('root').appendChild(ul);
+container.appendChild(ul);
+container.appendChild(content);
 },{}],"../../../../../usr/local/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -174,7 +192,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55476" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49946" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
