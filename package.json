@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "n": "^8.0.0"
+  }
+}
